@@ -1,23 +1,13 @@
+import inspect
+
 def introspection_info(obj):
-  """
-  Функция для подробной интроспекции объекта.
+  
 
-  Args:
-    obj: Объект для интроспекции.
-
-  Returns:
-    Словарь с информацией об объекте, включая:
-      - Тип объекта.
-      - Атрибуты объекта.
-      - Методы объекта.
-      - Модуль, к которому объект принадлежит.
-      - Другие интересные свойства объекта (в зависимости от типа).
-  """
   info = {}
   info['type'] = type(obj)
-  info['attributes'] = dir(obj)
+  info['attributes'] = [attr for attr in dir(obj) if not callable(getattr(obj, attr))] # Исправлено: атрибуты - это то, что не является callable
   info['methods'] = [attr for attr in dir(obj) if callable(getattr(obj, attr))]
-  info['module'] = obj.__module__ if hasattr(obj, '__module__') else 'Unknown'
+  info['module'] = inspect.getmodule(obj)  # Используем inspect для определения модуля
 
   # Дополнительная информация в зависимости от типа объекта:
   if isinstance(obj, str):
@@ -56,5 +46,3 @@ print("Информация о словаре:", dict_info)
 my_object = MyClass(10)
 object_info = introspection_info(my_object)
 print("Информация о созданном объекте:", object_info)
-
-
